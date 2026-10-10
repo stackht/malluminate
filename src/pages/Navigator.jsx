@@ -35,9 +35,9 @@ export default function Navigator() {
             </div>
             <MiniMall crowd={crowd} blocked={blocked} explored={step.explored} frontier={step.frontier} current={step.current} pathEdges={done && r.found ? r.pathEdges : []} start={from} goal={to} order={order} onEdge={(id) => engine.toggleBlock(id)} onNode={setTo} />
             <div className="legend" style={{ marginTop: 12 }}>
-              <span><i style={{ boxShadow: 'inset 0 0 0 3px #5ab2ff', background: '#0c0f16' }} />explored (number = order)</span>
-              <span><i style={{ boxShadow: 'inset 0 0 0 2px #e8c46a' }} />waiting in the frontier</span>
-              <span><i style={{ background: '#e8c46a' }} />chosen path</span>
+              <span><i style={{ boxShadow: 'inset 0 0 0 2px #1d3bff', background: '#e8ecff' }} />explored (number = order)</span>
+              <span><i style={{ outline: '1.5px dashed #0b0b0c', outlineOffset: -1 }} />waiting in the frontier</span>
+              <span><i style={{ background: '#1d3bff' }} />chosen path</span>
               <span className="note">Click a section to set the goal.</span>
             </div>
           </Panel>

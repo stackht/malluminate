@@ -7,7 +7,7 @@ import { FUZZY_CROWD } from '../lib/systems.js'
 import { GateHead, Panel, Howto, Slider, Seg, Pill, LinePlot, SERIES_COLORS } from '../components/Ui.jsx'
 import Icon from '../components/Icon.jsx'
 
-const heat = (v) => `hsl(${150 - (Math.max(0, Math.min(100, v)) / 100) * 150} 65% ${30 + (v / 100) * 10}%)`
+const heat = (v) => `hsl(${150 - (Math.max(0, Math.min(100, v)) / 100) * 150} 68% ${72 - (Math.max(0, Math.min(100, v)) / 100) * 12}%)`
 
 export default function Crowd() {
   const live = useMall()
@@ -116,7 +116,7 @@ export default function Crowd() {
               <button className="btn ghost" onClick={reset}><Icon name="reset" size={16} />Reset</button>
             </div>
             <div className="metric" style={{ marginBottom: 8 }}><b>{lossNow.toFixed(0)}</b><span>mean squared error {losses.length > 1 ? `(started at ${losses[0].toFixed(0)})` : '(untrained)'}</span></div>
-            <div className="svgwrap"><LinePlot series={[{ pts: losses.map((l, i) => [i, l]), color: '#e8c46a' }]} xRange={[0, Math.max(10, losses.length - 1)]} yRange={[0, Math.ceil(Math.max(...(losses.length > 2 ? losses.slice(1) : losses)) / 10) * 10 || 10]} yTicks={4} width={420} height={150} /></div>
+            <div className="svgwrap"><LinePlot series={[{ pts: losses.map((l, i) => [i, l]), color: '#1d3bff' }]} xRange={[0, Math.max(10, losses.length - 1)]} yRange={[0, Math.ceil(Math.max(...(losses.length > 2 ? losses.slice(1) : losses)) / 10) * 10 || 10]} yTicks={4} width={420} height={150} /></div>
           </Panel>
           <Panel title="Training data" tag={`${crowdData.length} synthetic samples`}>
             <table>

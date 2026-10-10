@@ -10,7 +10,7 @@ import { LinePlot, Seg, Slider, Pill } from '../components/Ui.jsx'
 export function TopBar({ sim }) {
   const started = sim.time > SCENARIOS[sim.scenario].start
   return (
-    <header className="topbar">
+    <header className="ctlbar">
       <div className="topbar-status">
         <span className="chip sim" title="This application runs a deterministic sample mall with synthetic customers. No live feed, camera or sensor is connected."><i /> Simulated data</span>
         <span className={'chip ' + (sim.isOpen() ? 'ok' : 'sim')}><i /> Mall {sim.isOpen() ? 'open' : 'closed'}</span>
@@ -119,20 +119,20 @@ export function Charts({ sim }) {
     <div className="charts">
       <div className="chart">
         <div className="field-top"><span className="lbl">Crowd index: actual vs AI forecast</span><span className="val">{Math.round(last('crowd'))}<small>/100</small></span></div>
-        <div className="svgwrap"><LinePlot series={[{ pts: one(forecast), color: '#e8c46a', dash: '5 4', w: 2 }, { pts: one(h.map((p) => [x(p), p.crowd])), color: '#4fd1ff' }]} xRange={xr} yRange={[0, 100]} width={360} height={140} yTicks={2} xLabel="sim min" /></div>
-        <div className="legend" style={{ marginTop: 6 }}><span><i style={{ background: '#4fd1ff' }} />actual</span><span><i style={{ background: '#e8c46a' }} />neuro-fuzzy forecast</span></div>
+        <div className="svgwrap"><LinePlot series={[{ pts: one(forecast), color: '#0b0b0c', dash: '5 4', w: 2 }, { pts: one(h.map((p) => [x(p), p.crowd])), color: '#1d3bff' }]} xRange={xr} yRange={[0, 100]} width={360} height={140} yTicks={2} xLabel="sim min" /></div>
+        <div className="legend" style={{ marginTop: 6 }}><span><i style={{ background: '#1d3bff' }} />actual</span><span><i style={{ background: '#0b0b0c' }} />neuro-fuzzy forecast</span></div>
       </div>
       <div className="chart">
         <div className="field-top"><span className="lbl">Visitors inside</span><span className="val">{Math.round(last('inside'))}</span></div>
-        <div className="svgwrap"><LinePlot series={[{ pts: one(h.map((p) => [x(p), p.inside])), color: '#35c98b' }]} xRange={xr} yRange={[0, Math.max(100, ...h.map((p) => p.inside))]} width={360} height={140} yTicks={2} xLabel="sim min" /></div>
+        <div className="svgwrap"><LinePlot series={[{ pts: one(h.map((p) => [x(p), p.inside])), color: '#16996a' }]} xRange={xr} yRange={[0, Math.max(100, ...h.map((p) => p.inside))]} width={360} height={140} yTicks={2} xLabel="sim min" /></div>
       </div>
       <div className="chart">
         <div className="field-top"><span className="lbl">Average temperature</span><span className="val">{last('temp').toFixed(1)}<small>°C</small></span></div>
-        <div className="svgwrap"><LinePlot series={[{ pts: one(h.map((p) => [x(p), p.temp])), color: '#ff7a59' }]} xRange={xr} yRange={[20, 32]} width={360} height={140} yTicks={3} xLabel="sim min" /></div>
+        <div className="svgwrap"><LinePlot series={[{ pts: one(h.map((p) => [x(p), p.temp])), color: '#e5392a' }]} xRange={xr} yRange={[20, 32]} width={360} height={140} yTicks={3} xLabel="sim min" /></div>
       </div>
       <div className="chart">
         <div className="field-top"><span className="lbl">Power draw</span><span className="val">{last('power').toFixed(0)}<small> kW</small></span></div>
-        <div className="svgwrap"><LinePlot series={[{ pts: one(h.map((p) => [x(p), p.power])), color: '#ffb02e' }]} xRange={xr} yRange={[0, 60]} width={360} height={140} yTicks={3} xLabel="sim min" /></div>
+        <div className="svgwrap"><LinePlot series={[{ pts: one(h.map((p) => [x(p), p.power])), color: '#e29a06' }]} xRange={xr} yRange={[0, 60]} width={360} height={140} yTicks={3} xLabel="sim min" /></div>
       </div>
     </div>
   )

@@ -36,7 +36,7 @@ export function OutputPlot({ system, result, unit }) {
     dash: '4 3',
     opacity: 0.7,
   }))
-  const fill = { pts: result.xs.map((x, i) => [x, result.agg[i]]), color: '#e8c46a' }
+  const fill = { pts: result.xs.map((x, i) => [x, result.agg[i]]), color: '#1d3bff' }
   return (
     <div>
       <div className="field-top" style={{ marginBottom: 4 }}>

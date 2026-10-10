@@ -1,14 +1,11 @@
-import Icon from './Icon.jsx'
-
-export function GateHead({ icon, title, tech, children }) {
+export function GateHead({ title, tech, children }) {
   return (
-    <header className="gatehead fadein">
-      <div className="gatehead-ic"><Icon name={icon} size={30} /></div>
+    <header className="pagehead fadein">
       <div>
         <h1>{title}</h1>
         <p>{children}</p>
       </div>
-      {tech && <span className="tag gatehead-tech" title="Technique behind this feature">{tech}</span>}
+      {tech && <span className="tag" title="Technique behind this feature">{tech}</span>}
     </header>
   )
 }
@@ -78,7 +75,7 @@ export function nodeSelect(nodes, value, onChange, label) {
 
 // Line plot of one or more series, used for membership functions and loss curves.
 export function LinePlot({ series, xRange, yRange = [0, 1], width = 420, height = 170, markers = [], xLabel, fill = null, yTicks = 3, logY = false }) {
-  const pad = { l: 36, r: 12, t: 12, b: 28 }
+  const pad = { l: 36, r: 12, t: 12, b: 34 }
   const W = width - pad.l - pad.r
   const H = height - pad.t - pad.b
   const x = (v) => pad.l + ((v - xRange[0]) / (xRange[1] - xRange[0])) * W
@@ -98,7 +95,7 @@ export function LinePlot({ series, xRange, yRange = [0, 1], width = 420, height 
         </g>
       ))}
       {xt.map((t) => (
-        <text key={t} x={x(t)} y={height - 8} textAnchor="middle">{Math.round(t)}</text>
+        <text key={t} x={x(t)} y={height - 16} textAnchor="middle">{Math.round(t)}</text>
       ))}
       <line className="axis" x1={pad.l} x2={width - pad.r} y1={pad.t + H} y2={pad.t + H} />
       {fill && <path d={d(fill.pts) + `L${x(fill.pts[fill.pts.length - 1][0])} ${yf(yRange[0])}L${x(fill.pts[0][0])} ${yf(yRange[0])}Z`} fill={fill.color} opacity="0.35" />}
@@ -107,13 +104,13 @@ export function LinePlot({ series, xRange, yRange = [0, 1], width = 420, height 
       ))}
       {markers.map((m, i) => (
         <g key={i}>
-          <line x1={x(m.at)} x2={x(m.at)} y1={pad.t} y2={pad.t + H} stroke={m.color || '#e8c46a'} strokeWidth="2" strokeDasharray={m.dash || '4 3'} />
-          {m.label && <text x={x(m.at) + 4} y={pad.t + 10} fill={m.color || '#e8c46a'} style={{ fill: m.color || '#e8c46a' }}>{m.label}</text>}
+          <line x1={x(m.at)} x2={x(m.at)} y1={pad.t} y2={pad.t + H} stroke={m.color || '#1d3bff'} strokeWidth="2" strokeDasharray={m.dash || '4 3'} />
+          {m.label && <text x={x(m.at) + 4} y={pad.t + 10} fill={m.color || '#1d3bff'} style={{ fill: m.color || '#1d3bff' }}>{m.label}</text>}
         </g>
       ))}
-      {xLabel && <text x={width - pad.r} y={height - 8} textAnchor="end" style={{ fill: '#8d9096' }}>{xLabel}</text>}
+      {xLabel && <text x={width - pad.r} y={height - 3} textAnchor="end" style={{ fill: '#8d9096' }}>{xLabel}</text>}
     </svg>
   )
 }
 
-export const SERIES_COLORS = ['#5ab2ff', '#35c98b', '#ff9a2e', '#d58bff']
+export const SERIES_COLORS = ['#1d3bff', '#16996a', '#e29a06', '#8a4dff']

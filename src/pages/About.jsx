@@ -21,7 +21,7 @@ export default function About() {
                 <tr key={p.n}>
                   <td className="num">{p.n}</td>
                   <td>{p.text}</td>
-                  <td><a href={p.where === 'home' ? '#/' : `#/${p.where}`} style={{ color: 'var(--gold)', fontWeight: 700 }}>{p.label}</a></td>
+                  <td><a href={p.where === 'home' ? '#/' : `#/${p.where}`} style={{ color: 'var(--blue)', fontWeight: 700 }}>{p.label}</a></td>
                 </tr>
               ))}
             </tbody>

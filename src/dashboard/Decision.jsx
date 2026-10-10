@@ -18,7 +18,7 @@ import { ARCH_COLORS } from './MallMap.jsx'
 function Sec({ title, ps, open, children }) {
   return (
     <details className="dsec" open={open}>
-      <summary><span>{title}</span><span className="tag">{ps}</span></summary>
+      <summary><span>{title}</span><small className="ps-note">{ps}</small></summary>
       <div className="dsec-body">{children}</div>
     </details>
   )
@@ -152,7 +152,7 @@ function CustomerSection({ sim }) {
       <table>
         <thead><tr><th>Perceptron category</th>{CATEGORIES.map((c) => <th key={c} className="r">{c}</th>)}</tr></thead>
         <tbody>
-          {CATEGORIES.map((c, i) => <tr key={c}><td>Actually {c}</td>{stats.cat[i].map((v, j) => <td key={j} className="r num" style={i === j ? { color: 'var(--gold)', fontWeight: 800 } : undefined}>{v}</td>)}</tr>)}
+          {CATEGORIES.map((c, i) => <tr key={c}><td>Actually {c}</td>{stats.cat[i].map((v, j) => <td key={j} className="r num" style={i === j ? { color: 'var(--blue)', fontWeight: 800 } : undefined}>{v}</td>)}</tr>)}
         </tbody>
       </table>
       <p className="note" style={{ margin: '6px 0 10px' }}>Correct for {total ? Math.round((100 * right) / total) : 0}% of the {total} customers inside.</p>

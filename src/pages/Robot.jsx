@@ -72,9 +72,9 @@ export default function Robot() {
               }))}
             </div>
             <div className="legend" style={{ marginTop: 12 }}>
-              <span><i style={{ boxShadow: 'inset 0 0 0 2px #e8c46a' }} />in the open list (g, f shown)</span>
+              <span><i style={{ boxShadow: 'inset 0 0 0 2px #1d3bff' }} />in the open list (g, f shown)</span>
               <span><i style={{ background: 'rgba(90,178,255,.35)' }} />closed (already expanded)</span>
-              <span><i style={{ background: '#e8c46a' }} />final path</span>
+              <span><i style={{ background: '#1d3bff' }} />final path</span>
               <span className="note">h = Manhattan distance to the goal.</span>
             </div>
           </Panel>

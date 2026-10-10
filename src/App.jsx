@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { PageSnapshot } from './state.jsx'
-import { APP_NAME } from './config.js'
+import { APP_NAME, APP_TAGLINE } from './config.js'
 import { FEATURES, featureOf } from './modules.js'
-import Icon from './components/Icon.jsx'
 import Dashboard from './dashboard/Dashboard.jsx'
 import Prolog from './pages/Prolog.jsx'
 import Navigator from './pages/Navigator.jsx'
@@ -17,14 +16,57 @@ import About from './pages/About.jsx'
 
 const PAGES = { prolog: Prolog, navigator: Navigator, robot: Robot, game: Game, climate: Climate, lighting: Lighting, crowd: Crowd, customers: Customers, assistant: Assistant, about: About }
 
+const INDEX = [
+  { id: 'home', ps: 'PS 1', title: 'Command centre', d: 'The whole mall, live: customers, crowd, climate, lighting and every AI decision.' },
+  ...FEATURES.map((f) => ({ id: f.id, ps: `PS ${f.ps.join(' · ')}`, title: f.label, d: f.does })),
+  { id: 'about', ps: 'Notes', title: 'About this project', d: 'What is simulated, and how the ten problem statements map to the system.' },
+]
+
 const fromHash = () => {
   const h = window.location.hash.replace('#/', '').replace('#', '')
   return h in PAGES ? h : 'home'
 }
 
+function IndexOverlay({ page, go, close }) {
+  const first = useRef(null)
+  useEffect(() => {
+    first.current?.focus()
+    const k = (e) => e.key === 'Escape' && close()
+    window.addEventListener('keydown', k)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', k)
+      document.body.style.overflow = ''
+    }
+  }, [close])
+  return (
+    <div className="index" role="dialog" aria-modal="true" aria-label="Index of features">
+      <div className="index-in">
+        <div className="index-top">
+          <span className="wordmark"><b>{APP_NAME}</b></span>
+          <button className="btn ghost sm" onClick={close}>Close</button>
+        </div>
+        <h2 className="index-lede">One mall, ten ways to understand it.</h2>
+        <ol>
+          {INDEX.map((it, i) => (
+            <li key={it.id}>
+              <button ref={i === 0 ? first : undefined} aria-current={page === it.id ? 'page' : undefined} onClick={() => { go(it.id); close() }}>
+                <span className="ix-ps">{it.ps}</span>
+                <span className="ix-t">{it.title}<span className="ix-d">{it.d}</span></span>
+                <span className="ix-go" aria-hidden="true">→</span>
+              </button>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  )
+}
+
 export default function App() {
   const [page, setPage] = useState(fromHash)
   const [howto, setHowto] = useState(false)
+  const [index, setIndex] = useState(false)
 
   useEffect(() => {
     const on = () => {
@@ -49,40 +91,34 @@ export default function App() {
     window.location.hash = id === 'home' ? '#/' : `#/${id}`
   }
 
+  const feature = featureOf(page)
+  const name = feature?.label ?? (page === 'about' ? 'About' : 'Command centre')
   useEffect(() => {
-    const name = featureOf(page)?.label ?? (page === 'about' ? 'About' : null)
-    document.title = name ? `${name} · ${APP_NAME}` : `${APP_NAME}: command centre`
-  }, [page])
+    document.title = page === 'home' ? `${APP_NAME}: command centre` : `${name} · ${APP_NAME}`
+  }, [page, name])
 
   const Page = PAGES[page]
   const hasHowto = page !== 'home' && page !== 'about'
 
   return (
     <>
-      <nav className="rail" aria-label="Mall control centre">
-        <button className="rail-brand" onClick={() => go('home')} aria-label={`${APP_NAME}: command centre`} aria-current={page === 'home' ? 'page' : undefined}>
-          <Icon name="store" size={22} />
-          <span className="rail-title"><b>{APP_NAME}</b><small>Command centre · PS 1</small></span>
-          <span className="tip">Command centre</span>
-        </button>
-        <div className="rail-section">AI modules</div>
-        <div className="rail-route">
-          {FEATURES.map((f) => (
-            <button key={f.id} className="rail-btn" onClick={() => go(f.id)} aria-current={page === f.id ? 'page' : undefined} aria-label={f.label}>
-              <Icon name={f.icon} size={20} />
-              <span className="rail-label">{f.label}<small>PS {f.ps.join('·')}</small></span>
-              <span className="tip">{f.label}</span>
-            </button>
-          ))}
-        </div>
-        <div className="rail-foot">
-          <button className="rail-btn about" onClick={() => go('about')} aria-current={page === 'about' ? 'page' : undefined} aria-label="About this project">
-            <Icon name="info" size={20} />
-            <span className="rail-label">About</span>
-            <span className="tip">About</span>
+      <header className="mast">
+        <div className="mast-in">
+          <button className="wordmark" onClick={() => go('home')} aria-label={`${APP_NAME}: command centre`}>
+            <b>{APP_NAME}</b>
+            <small>{APP_TAGLINE}</small>
           </button>
+          <div className="mast-where" aria-live="polite">
+            <b>{name}</b>
+            {feature && <span>PS {feature.ps.join(' · ')}</span>}
+            {page === 'home' && <span>PS 1 · the whole system</span>}
+          </div>
+          <div className="mast-actions">
+            {page !== 'home' && <button className="btn ghost sm" onClick={() => go('home')}>Dashboard</button>}
+            <button className="btn sm" onClick={() => setIndex(true)}>Index</button>
+          </div>
         </div>
-      </nav>
+      </header>
 
       <main key={page}>
         {page === 'home' ? <Dashboard /> : page === 'about' ? <About /> : <PageSnapshot><Page /></PageSnapshot>}
@@ -90,12 +126,13 @@ export default function App() {
 
       {hasHowto && (
         <>
-          <button className="howto-toggle btn" onClick={() => setHowto((h) => !h)} aria-expanded={howto}>
+          <button className="howto-toggle btn ghost" style={{ background: '#fff' }} onClick={() => setHowto((h) => !h)} aria-expanded={howto}>
             {howto ? 'Close' : 'How it works'}
           </button>
           <div className="howto-veil" onClick={() => setHowto(false)} />
         </>
       )}
+      {index && <IndexOverlay page={page} go={go} close={() => setIndex(false)} />}
     </>
   )
 }

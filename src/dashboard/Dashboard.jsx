@@ -35,12 +35,14 @@ export default function Dashboard() {
         <div className="dash-center">
           <MallMap engine={sim} tool={tool} layers={layers} selectedZone={zone} selectedEdge={edge} route={r.found ? r.path : null} onZone={setZone} onEdge={onEdge} />
           <Controls sim={sim} tool={tool} setTool={setTool} layers={layers} setLayers={setLayers} selectedEdge={edge} />
-          <Charts sim={sim} />
         </div>
         <div className="dash-right">
           <Decision sim={sim} zone={zone} setZone={setZone} plan={{ from, to, algo, setFrom, setTo, setAlgo, results }} />
-          <EventFeed sim={sim} />
         </div>
+      </div>
+      <div className="dash-lower">
+        <Charts sim={sim} />
+        <EventFeed sim={sim} />
       </div>
     </div>
   )
