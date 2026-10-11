@@ -10,7 +10,7 @@ export function useSim() {
   return engine
 }
 
-const staticKey = () => JSON.stringify([engine.blocked, engine.promo, engine.mode, engine.override])
+const staticKey = () => JSON.stringify([engine.blocked, engine.promo, engine.mode, engine.lightModel, engine.override])
 
 // What the module pages see: the mall as it was when the page opened (stable for animations),
 // with live walkway closures, promotion and control mode.

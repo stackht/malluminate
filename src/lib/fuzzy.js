@@ -97,3 +97,21 @@ export const LIGHT_SYSTEM = {
     { if: { ambient: 'dark', activity: 'busy' }, then: 'high' },
   ],
 }
+
+// Sugeno (Takagi-Sugeno) inference with crisp consequents: output = sum(w_k z_k) / sum(w_k).
+// Rule strengths use the same min operator as the Mamdani engine so the two models differ only in how the output is formed.
+export function inferSugeno(system, values) {
+  const fuzzified = {}
+  for (const [name, v] of Object.entries(system.inputs)) {
+    fuzzified[name] = {}
+    for (const [label, fn] of Object.entries(v.sets)) fuzzified[name][label] = fn(values[name])
+  }
+  const fired = system.rules.map((r) => ({ ...r, strength: Math.min(...Object.entries(r.if).map(([name, label]) => fuzzified[name][label])) }))
+  let num = 0
+  let den = 0
+  for (const r of fired) {
+    num += r.strength * r.z
+    den += r.strength
+  }
+  return { fuzzified, fired, den, crisp: den > 0 ? num / den : 0 }
+}

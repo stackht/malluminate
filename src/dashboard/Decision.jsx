@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react'
 import { NODES, NODE, levelOf } from '../lib/mall.js'
 import { ALGOS, walkMinutes } from '../lib/search.js'
 import { infer } from '../lib/fuzzy.js'
-import { AC_SYSTEM, LIGHT_SYSTEM } from '../lib/systems.js'
+import { AC_SYSTEM } from '../lib/systems.js'
+import { lightingBoth } from '../lib/lighting.js'
 import { crowdAll, classifyCustomer, groupOfCustomer, groupInfo, languageModels } from '../lib/models.js'
 import { crowdLevel, DAYS } from '../lib/crowd.js'
 import { CATEGORIES } from '../lib/customers.js'
@@ -12,7 +13,7 @@ import { loadProgram } from '../lib/prolog.js'
 import { mallKb } from '../lib/mallkb.js'
 import { daylight } from '../sim/engine.js'
 import { fmtClock } from '../sim/format.js'
-import { Pill, Slider } from '../components/Ui.jsx'
+import { Pill, Slider, Seg } from '../components/Ui.jsx'
 import { ARCH_COLORS } from './MallMap.jsx'
 
 function Sec({ title, ps, open, children }) {
@@ -85,7 +86,7 @@ function ClimateSection({ sim, zone, setZone }) {
 function LightSection({ sim, zone }) {
   const z = sim.zones[zone]
   const activity = Math.min(100, z.pct * 1.2)
-  const fz = useMemo(() => infer(LIGHT_SYSTEM, { ambient: z.ambient, activity }), [z.ambient, Math.round(activity / 3)]) // eslint-disable-line react-hooks/exhaustive-deps
+  const both = useMemo(() => lightingBoth(z.ambient, activity), [z.ambient, Math.round(activity / 3)]) // eslint-disable-line react-hooks/exhaustive-deps
   const ov = sim.override[zone]
   const mean = Object.values(sim.zones).reduce((s, q) => s + q.light, 0) / NODES.length
   return (
@@ -95,11 +96,15 @@ function LightSection({ sim, zone }) {
         <tbody>
           <tr><td>Ambient (daylight) light</td><td className="r num">{z.ambient}%</td></tr>
           <tr><td>Customer activity</td><td className="r num">{Math.round(activity)}%</td></tr>
-          <tr><td>Fuzzy controller says</td><td className="r num"><b>{fz.crisp.toFixed(0)}% brightness</b></td></tr>
-          <tr className="sel"><td>Applied ({sim.mode}{ov?.light != null ? ', manual' : ''})</td><td className="r num"><b>{Math.round(z.light)}%</b></td></tr>
+          <tr><td>Mamdani FIS (centroid)</td><td className="r num"><b>{both.mamdani.toFixed(1)}%</b></td></tr>
+          <tr><td>Sugeno FIS (weighted average)</td><td className="r num"><b>{both.sugeno.toFixed(1)}%</b></td></tr>
+          <tr><td>Difference</td><td className="r num">{both.diff >= 0 ? '+' : ''}{both.diff.toFixed(1)} points</td></tr>
+          <tr className="sel"><td>Applied ({sim.mode}{sim.mode === 'ai' ? `, ${sim.lightModel}` : ''}{ov?.light != null ? ', manual' : ''})</td><td className="r num"><b>{Math.round(z.light)}%</b></td></tr>
         </tbody>
       </table>
       <p className="note" style={{ margin: '8px 0' }}>Whole mall: lights at {Math.round(mean)}% on average, daylight {Math.round(100 * daylight(sim.hour()))}% outside. Turn on the Lighting layer to see the glow.</p>
+      <p className="lbl" style={{ marginBottom: 6 }}>Lighting FIS used in AI mode</p>
+      <Seg label="Lighting FIS" value={sim.lightModel} onChange={(m) => sim.setLightModel(m)} options={[{ value: 'mamdani', label: 'Mamdani' }, { value: 'sugeno', label: 'Sugeno' }]} />
       <Slider label="Manual brightness override" value={ov?.light ?? Math.round(z.light)} min={0} max={100} unit="%" onChange={(v) => sim.setOverride(zone, { light: v })} />
       <button className="btn ghost sm" disabled={ov?.light == null} onClick={() => sim.setOverride(zone, { light: null })}>Back to automatic</button>
     </>
@@ -240,7 +245,7 @@ export default function Decision({ sim, zone, setZone, plan }) {
       <div className="dp-head"><h2>AI decisions</h2><span className="tag">live</span></div>
       <Sec title="Navigation" ps="PS 1 · 3 · 4" open><NavSection plan={plan} /></Sec>
       <Sec title="Climate control" ps="PS 6" open><ClimateSection sim={sim} zone={zone} setZone={setZone} /></Sec>
-      <Sec title="Smart lighting" ps="PS 7"><LightSection sim={sim} zone={zone} /></Sec>
+      <Sec title="Smart lighting: Mamdani vs Sugeno" ps="PS 7"><LightSection sim={sim} zone={zone} /></Sec>
       <Sec title="Crowd forecast" ps="PS 8"><CrowdSection sim={sim} /></Sec>
       <Sec title="Customers" ps="PS 9"><CustomerSection sim={sim} /></Sec>
       <Sec title="Mall assistant" ps="PS 10"><AssistantSection sim={sim} /></Sec>

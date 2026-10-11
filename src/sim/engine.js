@@ -6,7 +6,8 @@ import { search } from '../lib/search.js'
 import { makeRng } from '../lib/rng.js'
 import { truth, crowdLevel } from '../lib/crowd.js'
 import { infer } from '../lib/fuzzy.js'
-import { AC_SYSTEM, LIGHT_SYSTEM } from '../lib/systems.js'
+import { AC_SYSTEM } from '../lib/systems.js'
+import { lightingBrightness } from '../lib/lighting.js'
 import { ARCHETYPES, makeRecord } from '../lib/customers.js'
 
 export const STEP = 0.5
@@ -31,6 +32,7 @@ export class MallEngine {
     this.running = false
     this.speed = 10
     this.mode = 'ai' // 'fixed' | 'ai' building control
+    this.lightModel = 'mamdani' // 'mamdani' | 'sugeno': which FIS sets the lighting in AI mode
     this.scenario = 'weekday'
     this.config = { updateMs: 50 }
     this.subscribe = this.subscribe.bind(this)
@@ -303,7 +305,7 @@ export class MallEngine {
         z.lastCtl = this.time
         z.ambient = Math.round(100 * n.sky * day)
         const targetAc = ov.ac != null ? ov.ac : this.mode === 'ai' ? infer(AC_SYSTEM, { temperature: z.temp, crowd: z.pct }).crisp : 50
-        const targetLight = ov.light != null ? ov.light : this.mode === 'ai' ? infer(LIGHT_SYSTEM, { ambient: z.ambient, activity: Math.min(100, z.pct * 1.2) }).crisp : 100
+        const targetLight = ov.light != null ? ov.light : this.mode === 'ai' ? lightingBrightness(this.lightModel, z.ambient, Math.min(100, z.pct * 1.2)) : 100
         z.ac += (targetAc - z.ac) * 0.6
         z.light += (targetLight - z.light) * 0.6
       }
@@ -369,6 +371,11 @@ export class MallEngine {
   setMode(mode) {
     this.mode = mode
     this.log('system', mode === 'ai' ? 'Building control: AI (fuzzy air conditioning and lighting)' : 'Building control: fixed (AC 50%, lights 100%)')
+    this.emit()
+  }
+  setLightModel(model) {
+    this.lightModel = model
+    this.log('system', `Lighting controller: ${model === 'sugeno' ? 'Sugeno FIS (weighted average)' : 'Mamdani FIS (centroid)'}`)
     this.emit()
   }
   setScenario(sc) { this.scenario = sc; this.reset() }

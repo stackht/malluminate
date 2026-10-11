@@ -71,3 +71,11 @@ export const FUZZY_CROWD = {
     { if: { time: 'evening', day: 'weekend', promo: 'running' }, then: 'high' },
   ],
 }
+
+// PS 7: zero-order Sugeno version of the lighting controller. It uses the same input sets and the same nine
+// rules as the Mamdani system; each rule's output set is replaced by a crisp brightness (close to that set's centre).
+export const SUGENO_CONST = { off: 5, low: 30, medium: 60, high: 88 }
+export const LIGHT_SUGENO = {
+  inputs: LIGHT_SYSTEM.inputs,
+  rules: LIGHT_SYSTEM.rules.map((r) => ({ if: r.if, then: r.then, z: SUGENO_CONST[r.then] })),
+}

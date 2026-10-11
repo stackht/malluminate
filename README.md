@@ -20,7 +20,7 @@ Rename the project in `src/config.js`.
 | 4 | Robot pathfinding with A* on a 3 × 3 grid | **Robot pathfinder** (editable grid S, G, #) |
 | 5 | Minimax store selection game | **Store game** (alpha-beta, play it yourself) |
 | 6 | Fuzzy air-conditioning controller | **Climate control**; runs for every section on the dashboard |
-| 7 | Fuzzy lighting from ambient light and activity | **Smart lighting**; runs for every section on the dashboard |
+| 7 | Lighting with Mamdani and Sugeno FIS, outputs compared | **Smart lighting**: both models side by side; the dashboard can run either for every section |
 | 8 | Neuro-fuzzy crowd prediction (low / medium / high) | **Crowd forecast** (ANFIS with 24 rules, trainable) |
 | 9 | Perceptron categories + competitive-learning groups | **Customer insight** |
 | 10 | Bigram µLM and trigram SLM messages | **Mall assistant** |
